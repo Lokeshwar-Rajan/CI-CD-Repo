@@ -15,7 +15,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'aws-creds',
                                                  usernameVariable: 'AWS_ACCESS_KEY_ID',
-                                                 passwordVariable: 'AWS_SECRET_ACCESS_KEY')])
+                                                 passwordVariable: 'AWS_SECRET_ACCESS_KEY')]){
                 dir("${TF_WORKSPACE}") {
                     sh '''
                         terraform init \
@@ -31,7 +31,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'aws-creds',
                                                  usernameVariable: 'AWS_ACCESS_KEY_ID',
-                                                 passwordVariable: 'AWS_SECRET_ACCESS_KEY')])
+                                                 passwordVariable: 'AWS_SECRET_ACCESS_KEY')]){
                 dir("${TF_WORKSPACE}") {
                     sh 'terraform destroy -auto-approve -var-file=/home/jenkins/terraform.tfvars'
                 }
