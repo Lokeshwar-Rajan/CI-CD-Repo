@@ -368,7 +368,7 @@ module "ecs_use1" {
   ecs_frontend_log_group_name = module.cloudwatch_monitoring_use1.ecs_frontend_log_group_name
   ecs_backend_log_group_name  = module.cloudwatch_monitoring_use1.ecs_backend_log_group_name
   aws_region                  = var.aws_region_us
-  ecs_task_execution_role_arn = module.ecs_task_execution_role_use1.role_arn
+  ecs_task_execution_role_arn = module.ecs_task_execution_role.role_arn
   service_desired_count       = var.service_desired_count
   frontend_tg_arn             = module.alb_use1.frontend_target_group_arn
   backend_tg_arn              = module.alb_use1.backend_target_group_arn
@@ -397,7 +397,7 @@ module "ecs_euw1" {
   ecs_frontend_log_group_name = module.cloudwatch_monitoring_euw1.ecs_frontend_log_group_name
   ecs_backend_log_group_name  = module.cloudwatch_monitoring_euw1.ecs_backend_log_group_name
   aws_region                  = var.aws_region_eu
-  ecs_task_execution_role_arn = module.ecs_task_execution_role_euw1.role_arn
+  ecs_task_execution_role_arn = module.ecs_task_execution_role.role_arn
   service_desired_count       = var.service_desired_count
   frontend_tg_arn             = module.alb_euw1.frontend_target_group_arn
   backend_tg_arn              = module.alb_euw1.backend_target_group_arn
@@ -429,7 +429,7 @@ module "database_use1" {
   engine_version         = var.db_engine_version
   instance_class         = var.db_instance_class
   monitoring_interval    = var.monitoring_interval
-  monitoring_role_arn    = module.rds_role_use1.role_arn
+  monitoring_role_arn    = module.rds_role.role_arn
   db_identifier          = var.db_identifier
   parameter_group_name   = var.parameter_group_name
   db_name                = var.db_name
@@ -447,7 +447,7 @@ module "database_euw1" {
   engine_version         = var.db_engine_version
   instance_class         = var.db_instance_class
   monitoring_interval    = var.monitoring_interval
-  monitoring_role_arn    = module.rds_role_euw1.role_arn
+  monitoring_role_arn    = module.rds_role.role_arn
   db_identifier          = var.db_identifier
   parameter_group_name   = var.parameter_group_name
   db_name                = var.db_name
@@ -527,14 +527,14 @@ module "aws_sns_topic_euw1" {
   
 }
 
-module "rds_role_use1" {
+module "rds_role" {
   source                      = "./Modules/IAM"
   providers = { aws = aws.use1 }
   role_name                   = var.rds_role_name
   trusted_services            = var.rds_trusted_services
   policy_arns                 = var.rds_policy_arns
 }
-module "ecs_task_execution_role_use1" {
+module "ecs_task_execution_role" {
   source                      = "./Modules/IAM"
   providers = { aws = aws.use1 }
   role_name                   = var.ecs_role_name
@@ -542,17 +542,3 @@ module "ecs_task_execution_role_use1" {
   policy_arns                 = var.ecs_policy_arns
 }
 
-module "rds_role_euw1" {
-  source                      = "./Modules/IAM"
-  providers = { aws = aws.euw1 }
-  role_name                   = var.rds_role_name
-  trusted_services            = var.rds_trusted_services
-  policy_arns                 = var.rds_policy_arns
-}
-module "ecs_task_execution_role_euw1" {
-  source                      = "./Modules/IAM"
-  providers = { aws = aws.euw1 }
-  role_name                   = var.ecs_role_name
-  trusted_services            = var.ecs_trusted_services
-  policy_arns                 = var.ecs_policy_arns
-}
