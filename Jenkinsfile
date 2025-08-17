@@ -35,7 +35,7 @@ pipeline {
         stage('Build Backend Image') {
             steps {
                 sh '''
-                    docker build -t ${ECR_REGISTRY}/${BACKEND_REPO}:latest ./backend
+                    docker build -t ${ECR_REGISTRY}/${BACKEND_REPO}:latest ./Backend
                 '''
             }
         }
@@ -51,7 +51,7 @@ pipeline {
         stage('Build Frontend Image') {
             steps {
                 sh '''
-                    docker build -t ${ECR_REGISTRY}/${FRONTEND_REPO}:latest ./frontend
+                    docker build -t ${ECR_REGISTRY}/${FRONTEND_REPO}:latest ./Frontend
                 '''
             }
         }
