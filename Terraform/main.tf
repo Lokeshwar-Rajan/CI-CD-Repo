@@ -319,7 +319,7 @@ module "alb_euw1" {
 
 
 module "bastion_use1" {
-  source             = "./modules/Bastion"
+  source             = "./Modules/Bastion"
   providers = { aws = aws.use1 }
   ami_id             = var.bastion_ami_id           
   instance_type      = var.bastion_instance_type
@@ -336,7 +336,7 @@ module "bastion_use1" {
 }
 
 module "bastion_euw1" {
-  source             = "./modules/Bastion"
+  source             = "./Modules/Bastion"
   providers = { aws = aws.euw1 }
   ami_id             = var.bastion_ami_id           
   instance_type      = var.bastion_instance_type
