@@ -147,14 +147,14 @@ module "ecs_frontend_sg_euw1" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["10.1.0.0/24", "10.1.1.0/24"]
+    cidr_blocks = ["10.2.0.0/24", "10.2.1.0/24"]
   },
   {
     description = "Allow HTTPS"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["10.1.0.0/24", "10.1.1.0/24"]
+    cidr_blocks = ["10.2.0.0/24", "10.2.1.0/24"]
   },
   {
     description = "Allow SSH"
@@ -216,14 +216,14 @@ module "ecs_backend_sg_euw1" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["10.1.0.0/24", "10.1.1.0/24"]
+    cidr_blocks = ["10.2.0.0/24", "10.2.1.0/24"]
   },
   {
     description = "Allow HTTPS"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["10.1.0.0/24", "10.1.1.0/24"]
+    cidr_blocks = ["10.2.0.0/24", "10.2.1.0/24"]
   },
   {
     description = "Allow SSH"
@@ -237,7 +237,7 @@ module "ecs_backend_sg_euw1" {
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
-    cidr_blocks = ["10.1.0.0/24", "10.1.1.0/24"]
+    cidr_blocks = ["10.2.0.0/24", "10.2.1.0/24"]
   }
   ]
 }
@@ -272,7 +272,7 @@ module "db_sg_euw1" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["10.1.2.0/24", "10.1.3.0/24"]
+    cidr_blocks = ["10.2.2.0/24", "10.2.3.0/24"]
   }
   ]
 }
