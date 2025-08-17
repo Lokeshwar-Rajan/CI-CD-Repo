@@ -12,7 +12,7 @@ data "aws_ssm_parameter" "ecs_ami" {
   name = "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
 }
 resource "aws_iam_role" "ecs_instance_role" {
-  name = "ecs-instance-role"
+  name = "ecs-instance-role-new"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
