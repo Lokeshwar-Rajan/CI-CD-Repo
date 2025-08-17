@@ -1,9 +1,12 @@
 pipeline {
     agent any
 
+    parameters {
+        choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Choose Terraform action: apply (provision) or destroy (delete)')
+    }
+
     environment {
         AWS_REGION = 'us-east-1'
-        // Jenkins credentials ID storing AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
         AWS_CREDENTIALS = 'aws-creds'
         FRONTEND_IMAGE_TAG = 'frontend-latest'
         BACKEND_IMAGE_TAG = 'backend-latest'
@@ -12,72 +15,84 @@ pipeline {
         TF_VAR_FILE = '/home/jenkins/terraform.tfvars'
     }
 
-        stages {
-            stage('Checkout Code') {
-                steps {
-                    git branch: 'master',
-                        url: 'https://github.com/Lokeshwar-Rajan/CI-CD-Repo.git'
-                }
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'master',
+                    url: 'https://github.com/Lokeshwar-Rajan/CI-CD-Repo.git'
             }
+        }
 
-        stage('Terraform Init & Apply') {
+        stage('Terraform Action') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'aws-creds',
                                                  usernameVariable: 'AWS_ACCESS_KEY_ID',
                                                  passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     dir("${TERRAFORM_DIR}") {
-                        sh 'terraform init'
-                        sh 'terraform apply -auto-approve -var-file=${TF_VAR_FILE}'
+                        script {
+                            if (params.ACTION == 'apply') {
+                                sh 'terraform init'
+                                sh 'terraform apply -auto-approve -var-file=${TF_VAR_FILE}'
+                            } else if (params.ACTION == 'destroy') {
+                                sh 'terraform init'
+                                sh 'terraform destroy -auto-approve -var-file=${TF_VAR_FILE}'
+                            }
+                        }
                     }
                 }
             }
         }
 
-        stage('Login to ECR') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'aws-creds',
-                                                 usernameVariable: 'AWS_ACCESS_KEY_ID',
-                                                 passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    sh '''
-                    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com
-                    '''
-                }
+        stage('Build & Push Images and Update ECS') {
+            when {
+                expression { params.ACTION == 'apply' }
             }
-        }
-
-        stage('Build & Push Frontend Docker Image') {
-            steps {
-                script {
-                    docker.build("${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}", './Frontend')
-                    sh '''
-                    docker tag ${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG} $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}
-                    docker push $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}
-                    '''
+            stages {
+                stage('Login to ECR') {
+                    steps {
+                        withCredentials([usernamePassword(credentialsId: 'aws-creds',
+                                                         usernameVariable: 'AWS_ACCESS_KEY_ID',
+                                                         passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                            sh '''
+                            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com
+                            '''
+                        }
+                    }
                 }
-            }
-        }
 
-        stage('Build & Push Backend Docker Image') {
-            steps {
-                script {
-                    docker.build("${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}", './Backend')
-                    sh '''
-                    docker tag ${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG} $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}
-                    docker push $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}
-                    '''
+                stage('Build & Push Frontend Docker Image') {
+                    steps {
+                        script {
+                            docker.build("${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}", './Frontend')
+                            sh '''
+                            docker tag ${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG} $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}
+                            docker push $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}
+                            '''
+                        }
+                    }
                 }
-            }
-        }
 
-        stage('Update ECS Services') {
-            steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS}"]]) {
-                    sh '''
-                    # Update frontend
-                    aws ecs update-service --cluster myapp-cluster --service myapp-cluster-frontend-svc --force-new-deployment
-                    # Update backend
-                    aws ecs update-service --cluster myapp-cluster --service myapp-cluster-backend-svc --force-new-deployment
-                    '''
+                stage('Build & Push Backend Docker Image') {
+                    steps {
+                        script {
+                            docker.build("${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}", './Backend')
+                            sh '''
+                            docker tag ${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG} $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}
+                            docker push $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}
+                            '''
+                        }
+                    }
+                }
+
+                stage('Update ECS Services') {
+                    steps {
+                        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS}"]]) {
+                            sh '''
+                            aws ecs update-service --cluster myapp-cluster --service myapp-cluster-frontend-svc --force-new-deployment
+                            aws ecs update-service --cluster myapp-cluster --service myapp-cluster-backend-svc --force-new-deployment
+                            '''
+                        }
+                    }
                 }
             }
         }
@@ -85,10 +100,10 @@ pipeline {
 
     post {
         success {
-            echo 'Deployment Successful! ECS Services Updated!'
+            echo "Pipeline finished successfully with ACTION = ${params.ACTION}"
         }
         failure {
-            echo 'Deployment Failed! Check the logs for errors.'
+            echo "Pipeline failed. ACTION = ${params.ACTION}"
         }
     }
 }
