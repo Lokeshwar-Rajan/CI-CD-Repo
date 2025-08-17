@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        TFVARS = "/var/lib/jenkins/terraform.tfvars"  // Path to tfvars file on Jenkins machine
+        TFVARS = "/home/jenkins/terraform.tfvars"  // Path to tfvars file on Jenkins machine
     }
 
     stages {
