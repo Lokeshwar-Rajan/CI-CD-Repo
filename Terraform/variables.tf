@@ -6,6 +6,25 @@ variable "primary_private_subnet_cidrs" {}
 variable "primary_db_subnet_cidrs" {}
 variable "nat_gw_subnet_indexes" {}
 
+variable "sec_vpc_cidr" {
+  
+}
+variable "sec_vpc_name" {
+  
+}
+variable "sec_azs" {
+
+}
+variable "sec_public_subnet_cidrs" {
+
+}
+variable "sec_private_subnet_cidrs" {
+
+}
+variable "sec_db_subnet_cidrs" {
+
+}
+
 
 variable "bastion_ami_id" {}
 variable "bastion_instance_type" {}
@@ -51,9 +70,8 @@ variable "service_desired_count" {}
 variable "tags" {}
 variable "application_name" {}
 variable "additional_tags" {}
-variable "frontend_image_tag" {}
-variable "backend_image_tag" {}
-variable "aws_region" {}
+variable "aws_region_us" {}
+variable "aws_region_eu" {}
 
 variable "ecs_frontend_log_group_name" {}
 variable "ecs_backend_log_group_name"  {}
