@@ -14,12 +14,12 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 dir("${TF_WORKSPACE}") {
-                    sh """
+                    sh '''
                         terraform init \
                           -backend-config="bucket=my-storage-tf-state-bucket7" \
-                          -backend-config="key=infra/terraform.tfstate" \
+                          -backend-config="key=prod/terraform.tfstate" \
                           -backend-config="region=us-east-1"
-                    """
+                    '''
                 }
             }
         }
