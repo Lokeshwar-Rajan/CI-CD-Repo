@@ -358,6 +358,7 @@ module "ecs_use1" {
   ecs_cluster_name            = var.ecs_cluster_name
   instance_type               = var.instance_type
   key_name                    = var.key_name
+  instance_profile            = module.ecs_instance_role.instance_profile_name
   private_subnet_ids          = module.vpc_primary_use1.private_subnet_ids
   ecs_instance_sg_ids         = [module.ecs_frontend_sg_use1.security_group_id, module.ecs_backend_sg_use1.security_group_id]
   asg_min_size                = var.asg_min_size
@@ -387,6 +388,7 @@ module "ecs_euw1" {
   ecs_cluster_name            = var.ecs_cluster_name
   instance_type               = var.instance_type
   key_name                    = var.key_name
+  instance_profile            = module.ecs_instance_role.instance_profile_name
   private_subnet_ids          = module.vpc_sec.private_subnet_ids
   ecs_instance_sg_ids         = [module.ecs_frontend_sg_euw1.security_group_id, module.ecs_backend_sg_euw1.security_group_id]
   asg_min_size                = var.asg_min_size
