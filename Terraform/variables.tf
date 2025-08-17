@@ -104,6 +104,9 @@ variable "ecs_trusted_services" {
 variable "ecs_policy_arns" {
   
 }
+variable "ecs_instance_role_name" {}
+variable "ecs_instance_trusted_services" {}
+variable "ecs_instance_policy_arns" {}
 
 variable "recovery_window_in_days" {
   
