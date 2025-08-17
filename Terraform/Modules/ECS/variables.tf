@@ -20,7 +20,7 @@ variable "key_name" {
 
 }
 
-
+variable "instance_profile" {}
 variable "ecs_instance_sg_ids" {
 
 }
