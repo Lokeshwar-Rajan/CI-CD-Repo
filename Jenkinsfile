@@ -25,7 +25,7 @@ pipeline {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS}"]]) {
                     dir("${TERRAFORM_DIR}") {
                         sh 'terraform init'
-                        sh "terraform apply -auto-approve -var-file='${TF_VAR_FILE}'"
+                        sh 'terraform apply -auto-approve -var-file=${TF_VAR_FILE}'
                     }
                 }
             }
@@ -34,9 +34,9 @@ pipeline {
         stage('Login to ECR') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS}"]]) {
-                    sh """
+                    sh '''
                     aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com
-                    """
+                    '''
                 }
             }
         }
@@ -45,10 +45,10 @@ pipeline {
             steps {
                 script {
                     docker.build("${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}", './Frontend')
-                    sh """
+                    sh '''
                     docker tag ${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG} $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}
                     docker push $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}
-                    """
+                    '''
                 }
             }
         }
@@ -57,10 +57,10 @@ pipeline {
             steps {
                 script {
                     docker.build("${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}", './Backend')
-                    sh """
+                    sh '''
                     docker tag ${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG} $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}
                     docker push $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}
-                    """
+                    '''
                 }
             }
         }
@@ -68,12 +68,12 @@ pipeline {
         stage('Update ECS Services') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS}"]]) {
-                    sh """
+                    sh '''
                     # Update frontend
                     aws ecs update-service --cluster myapp-cluster --service myapp-cluster-frontend-svc --force-new-deployment
                     # Update backend
                     aws ecs update-service --cluster myapp-cluster --service myapp-cluster-backend-svc --force-new-deployment
-                    """
+                    '''
                 }
             }
         }
