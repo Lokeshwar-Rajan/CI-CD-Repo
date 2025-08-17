@@ -7,7 +7,7 @@ pipeline {
         stage('Checkout Infra Repo') {
             steps {
                 // Replace with your infra repo (the one that has main.tf, variables.tf, etc.)
-                git branch: 'main', url: 'https://github.com/Lokeshwar-Rajan/Infra-Repo.git', credentialsId: 'PAT-TOKEN'
+                git branch: 'main', url: 'https://github.com/Lokeshwar-Rajan/CI-CD-Repo.git', credentialsId: 'PAT-TOKEN'
             }
         }
 
