@@ -529,16 +529,21 @@ module "aws_sns_topic_euw1" {
 
 module "rds_role" {
   source                      = "./Modules/IAM"
-  providers = { aws = aws.use1 }
   role_name                   = var.rds_role_name
   trusted_services            = var.rds_trusted_services
   policy_arns                 = var.rds_policy_arns
 }
 module "ecs_task_execution_role" {
   source                      = "./Modules/IAM"
-  providers = { aws = aws.use1 }
   role_name                   = var.ecs_role_name
   trusted_services            = var.ecs_trusted_services
   policy_arns                 = var.ecs_policy_arns
+}
+module "ecs_instance_role" {
+  source   = "./Modules/IAM"
+  role_name              = var.ecs_instance_role_name
+  trusted_services       = var.ecs_instance_trusted_services
+  policy_arns            = var.ecs_instance_policy_arns
+  create_instance_profile = true
 }
 
