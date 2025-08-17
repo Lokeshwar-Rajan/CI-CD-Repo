@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    environment {
+        TFVARS = "/var/lib/jenkins/terraform.tfvars"  // Path to tfvars file on Jenkins machine
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    credentialsId: 'PAT-TOKEN',
+                    url: 'https://github.com/Lokeshwar-Rajan/CI-CD-Repo-des.git'
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                dir('Terraform') {
+                    sh 'terraform init'
+                }
+            }
+        }
+
+        stage('Terraform Destroy') {
+            steps {
+                dir('Terraform') {
+                    sh 'terraform destroy -auto-approve -var-file=${TFVARS}'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Terraform resources destroyed successfully!'
+        }
+        failure {
+            echo '❌ Terraform destroy failed!'
+        }
+    }
+}
