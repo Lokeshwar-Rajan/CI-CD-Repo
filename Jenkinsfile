@@ -12,17 +12,19 @@ pipeline {
         TF_VAR_FILE = '/home/jenkins/terraform.tfvars'
     }
 
-    stages {
-
-        stage('Checkout') {
-            steps {
-                git branch: 'master', url: 'https://github.com/Lokeshwar-Rajan/CI-CD-Repo.git'
+        stages {
+            stage('Checkout Code') {
+                steps {
+                    git branch: 'master',
+                        url: 'https://github.com/Lokeshwar-Rajan/CI-CD-Repo.git'
+                }
             }
-        }
 
         stage('Terraform Init & Apply') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS}"]]) {
+                withCredentials([usernamePassword(credentialsId: 'aws-creds',
+                                                 usernameVariable: 'AWS_ACCESS_KEY_ID',
+                                                 passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     dir("${TERRAFORM_DIR}") {
                         sh 'terraform init'
                         sh 'terraform apply -auto-approve -var-file=${TF_VAR_FILE}'
@@ -33,7 +35,9 @@ pipeline {
 
         stage('Login to ECR') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS}"]]) {
+                withCredentials([usernamePassword(credentialsId: 'aws-creds',
+                                                 usernameVariable: 'AWS_ACCESS_KEY_ID',
+                                                 passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     sh '''
                     aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com
                     '''
