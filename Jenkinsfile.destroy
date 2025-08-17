@@ -1,31 +1,33 @@
 pipeline {
     agent any
-
     environment {
-        TFVARS = "/home/jenkins/terraform.tfvars"  // Path to tfvars file on Jenkins machine
+        TF_WORKSPACE = "Terraform"
     }
-
     stages {
-        stage('Checkout') {
+        stage('Checkout Infra Repo') {
             steps {
-                git branch: 'main',
-                    credentialsId: 'PAT-TOKEN',
-                    url: 'https://github.com/Lokeshwar-Rajan/CI-CD-Repo-des.git'
+                // Replace with your infra repo (the one that has main.tf, variables.tf, etc.)
+                git branch: 'main', url: 'https://github.com/Lokeshwar-Rajan/Infra-Repo.git', credentialsId: 'PAT-TOKEN'
             }
         }
 
         stage('Terraform Init') {
             steps {
-                dir('Terraform') {
-                    sh 'terraform init'
+                dir("${TF_WORKSPACE}") {
+                    sh """
+                        terraform init \
+                          -backend-config="bucket=my-storage-tf-state-bucket7" \
+                          -backend-config="key=infra/terraform.tfstate" \
+                          -backend-config="region=us-east-1"
+                    """
                 }
             }
         }
 
         stage('Terraform Destroy') {
             steps {
-                dir('Terraform') {
-                    sh 'terraform destroy -auto-approve -var-file=${TFVARS}'
+                dir("${TF_WORKSPACE}") {
+                    sh 'terraform destroy -auto-approve -var-file=/home/jenkins/terraform.tfvars'
                 }
             }
         }
@@ -33,10 +35,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Terraform resources destroyed successfully!'
+            echo "✅ Terraform resources destroyed successfully!"
         }
         failure {
-            echo '❌ Terraform destroy failed!'
+            echo "❌ Terraform destroy failed!"
         }
     }
 }
