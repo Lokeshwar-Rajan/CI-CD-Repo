@@ -57,6 +57,7 @@ resource "aws_autoscaling_group" "ecs_asg" {
   max_size            = var.asg_max_size
   min_size            = var.asg_min_size
   vpc_zone_identifier = var.private_subnet_ids
+  force_delete = true
 
   launch_template {
     id      = aws_launch_template.myecs_lt.id
