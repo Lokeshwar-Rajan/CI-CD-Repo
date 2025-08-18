@@ -11,7 +11,40 @@ resource "aws_ecs_cluster" "myecs" {
 data "aws_ssm_parameter" "ecs_ami" {
   name = "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
 }
+resource "aws_iam_role" "ecs_task_role" {
+  name = "${var.ecs_cluster_name}-task-role"
 
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "ecs_task_role_policy" {
+  name = "${var.ecs_cluster_name}-task-role-policy"
+  role = aws_iam_role.ecs_task_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = var.db_secret_arn
+      }
+    ]
+  })
+}
 resource "aws_launch_template" "myecs_lt" {
   name_prefix   = "${var.ecs_cluster_name}-lt"
   image_id      = data.aws_ssm_parameter.ecs_ami.value
@@ -99,6 +132,7 @@ resource "aws_ecs_task_definition" "frontend" {
   ])
 
   execution_role_arn = var.ecs_task_execution_role_arn
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
   lifecycle {
     create_before_destroy = true
   }
@@ -141,6 +175,7 @@ resource "aws_ecs_task_definition" "backend" {
   ])
 
   execution_role_arn = var.ecs_task_execution_role_arn
+  task_role_arn      = aws_iam_role.ecs_task_role.arn
   lifecycle {
     create_before_destroy = true
   }
