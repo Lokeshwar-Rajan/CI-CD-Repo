@@ -8,9 +8,6 @@ pipeline {
     environment {
         AWS_REGION = 'us-east-1'
         AWS_CREDENTIALS = 'aws-creds'
-        ECR_REGISTRY = "521926169182.dkr.ecr.us-east-1.amazonaws.com"
-        FRONTEND_IMAGE_TAG = 'frontend'
-        BACKEND_IMAGE_TAG = 'backend'
         ECR_REPO_NAME = 'my-repo'
         TERRAFORM_DIR = 'Terraform'
         TF_VAR_FILE = '/home/jenkins/terraform.tfvars'
@@ -48,6 +45,31 @@ pipeline {
             when {
                 expression { params.ACTION == 'apply' }
             }
+            stage('Fetch ECR Repo URL') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'aws-creds',
+                                                 usernameVariable: 'AWS_ACCESS_KEY_ID',
+                                                 passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+            sh '''
+                ECR_REPO=$(aws ecr describe-repositories --repository-names my-app --query "repositories[0].repositoryUri" --output text)
+                echo "✅ ECR Repo: $ECR_REPO"
+                echo "ECR_REPO=$ECR_REPO" > ecr_env
+            '''
+        }
+    }
+}
+
+stage('Build Docker Images') {
+    steps {
+        dir('Frontend') {
+            sh "docker build -t frontend:latest ."
+        }
+
+        dir('Backend') {
+            sh "docker build -t backend:latest ."
+        }
+    }
+}
             stages {
                 stage('Login to ECR') {
                     steps {
@@ -60,30 +82,22 @@ pipeline {
                         }
                     }
                 }
+                stage('Tag & Push Docker Images') {
+    steps {
+        script {
+            def ECR_REPO = readFile('ecr_env').trim().split('=')[1]
+            sh """
+                # Tag and push frontend
+                docker tag frontend:latest ${ECR_REPO}:frontend-latest
+                docker push ${ECR_REPO}:frontend-latest
 
-                stage('Build & Push Frontend Docker Image') {
-                    steps {
-                        script {
-                            docker.build("${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}", './Frontend')
-                            sh '''
-                            docker tag ${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG} ${ECR_REGISTRY}/${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}
-                            docker push ${ECR_REGISTRY}/${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}
-                            '''
-                        }
-                    }
-                }
-
-                stage('Build & Push Backend Docker Image') {
-                    steps {
-                        script {
-                            docker.build("${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}", './Backend')
-                            sh '''
-                            docker tag ${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG} ${ECR_REGISTRY}/${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}
-                            docker push ${ECR_REGISTRY}/${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}
-                            '''
-                        }
-                    }
-                }
+                # Tag and push backend
+                docker tag backend:latest ${ECR_REPO}:backend-latest
+                docker push ${ECR_REPO}:backend-latest
+            """
+        }
+    }
+}
             }
         }
     }
