@@ -87,7 +87,9 @@ pipeline {
 
                 stage('Update ECS Services') {
                     steps {
-                        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS}"]]) {
+                        withCredentials([usernamePassword(credentialsId: 'aws-creds',
+                                                         usernameVariable: 'AWS_ACCESS_KEY_ID',
+                                                         passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                             sh '''
                             aws ecs update-service --cluster myapp-cluster --service myapp-cluster-frontend-svc --force-new-deployment
                             aws ecs update-service --cluster myapp-cluster --service myapp-cluster-backend-svc --force-new-deployment
