@@ -108,7 +108,13 @@ variable "ecs_policy_arns" {
 variable "ecs_instance_role_name" {}
 variable "ecs_instance_trusted_services" {}
 variable "ecs_instance_policy_arns" {}
+variable "ecs_task_role_name" {
+  default = "my-ecs-task-role"
+}
 
+variable "ecs_task_trusted_services" {
+  default = ["ecs-tasks.amazonaws.com"]
+}
 variable "recovery_window_in_days" {
   
 }
