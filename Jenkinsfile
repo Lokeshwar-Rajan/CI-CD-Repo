@@ -8,6 +8,7 @@ pipeline {
     environment {
         AWS_REGION = 'us-east-1'
         AWS_CREDENTIALS = 'aws-creds'
+        ECR_REGISTRY = "521926169182.dkr.ecr.us-east-1.amazonaws.com"
         FRONTEND_IMAGE_TAG = 'frontend'
         BACKEND_IMAGE_TAG = 'backend'
         ECR_REPO_NAME = 'my-repo'
@@ -65,8 +66,8 @@ pipeline {
                         script {
                             docker.build("${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}", './Frontend')
                             sh '''
-                            docker tag ${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG} $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}
-                            docker push $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}
+                            docker tag ${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG} ${ECR_REGISTRY}/${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}
+                            docker push ${ECR_REGISTRY}/${ECR_REPO_NAME}:${FRONTEND_IMAGE_TAG}
                             '''
                         }
                     }
@@ -77,8 +78,8 @@ pipeline {
                         script {
                             docker.build("${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}", './Backend')
                             sh '''
-                            docker tag ${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG} $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}
-                            docker push $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}
+                            docker tag ${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG} ${ECR_REGISTRY}/${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}
+                            docker push ${ECR_REGISTRY}/${ECR_REPO_NAME}:${BACKEND_IMAGE_TAG}
                             '''
                         }
                     }
