@@ -48,7 +48,7 @@ pipeline {
                                                  usernameVariable: 'AWS_ACCESS_KEY_ID',
                                                  passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     sh '''
-                        ECR_REPO=$(aws ecr describe-repositories --repository-names my-app --query "repositories[0].repositoryUri" --output text)
+                        ECR_REPO=$(aws ecr describe-repositories --repository-names my-repo --query "repositories[0].repositoryUri" --output text)
                         echo "✅ ECR Repo: $ECR_REPO"
                         echo "ECR_REPO=$ECR_REPO" > ecr_env
                     '''
