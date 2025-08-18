@@ -15,7 +15,7 @@ variable "aws_region" {
 variable "instance_type" {
 
 }
-variable "ecs_task_role_name" {}
+variable "ecs_task_role_arn" {}
 variable "key_name" {
 
 }
