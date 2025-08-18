@@ -24,8 +24,10 @@ resource "aws_launch_template" "myecs_lt" {
 
   user_data = base64encode(<<-EOT
     #!/bin/bash
-    echo "ECS_CLUSTER=myapp-cluster" >> /etc/ecs/ecs.config
-    echo "ECS_AVAILABLE_LOGGING_DRIVERS=[\"awslogs\",\"json-file\"]" >> /etc/ecs/ecs.config
+    echo "ECS_CLUSTER=${aws_ecs_cluster.myecs.name}" > /etc/ecs/ecs.config
+    echo 'ECS_AVAILABLE_LOGGING_DRIVERS=["awslogs","json-file"]' >> /etc/ecs/ecs.config
+    echo 'ECS_ENABLE_TASK_IAM_ROLE=true' >> /etc/ecs/ecs.config
+    echo 'ECS_ENABLE_TASK_IAM_ROLE_NETWORK_HOST=true' >> /etc/ecs/ecs.config
     systemctl enable --now ecs
   EOT
   )
@@ -149,7 +151,6 @@ resource "aws_ecs_service" "frontend" {
   cluster         = aws_ecs_cluster.myecs.id
   task_definition = aws_ecs_task_definition.frontend.arn
   desired_count   = var.service_desired_count
-  launch_type     = "EC2"
 
   load_balancer {
     target_group_arn = var.frontend_tg_arn
@@ -173,7 +174,6 @@ resource "aws_ecs_service" "backend" {
   cluster         = aws_ecs_cluster.myecs.id
   task_definition = aws_ecs_task_definition.backend.arn
   desired_count   = var.service_desired_count
-  launch_type     = "EC2"
 
   load_balancer {
     target_group_arn = var.backend_tg_arn
