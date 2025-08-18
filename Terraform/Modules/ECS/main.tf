@@ -22,10 +22,13 @@ resource "aws_launch_template" "myecs_lt" {
     name = var.instance_profile
   }
 
-   user_data = <<-EOF
-              #!/bin/bash
-              echo ECS_CLUSTER=${aws_ecs_cluster.myecs.name} >> /etc/ecs/ecs.config
-              EOF
+  user_data = base64encode(<<-EOT
+    #!/bin/bash
+    echo "ECS_CLUSTER=myapp-cluster" >> /etc/ecs/ecs.config
+    echo "ECS_AVAILABLE_LOGGING_DRIVERS=[\"awslogs\",\"json-file\"]" >> /etc/ecs/ecs.config
+    systemctl enable --now ecs
+  EOT
+  )
 
 
   network_interfaces {
