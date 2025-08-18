@@ -528,7 +528,28 @@ module "aws_sns_topic_euw1" {
   owner                       = var.owner
   
 }
+resource "aws_iam_policy" "ecs_task_secrets_policy" {
+  name        = "${var.ecs_task_role_name}-secrets-policy"
+  description = "Allow ECS task to access specific secrets"
 
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["secretsmanager:GetSecretValue"]
+        Resource = var.db_secret_arn
+      }
+    ]
+  })
+}
+module "ecs_task_role" {
+  source               = "./Modules/IAM"
+  role_name            = var.ecs_task_role_name
+  trusted_services     = var.ecs_task_trusted_services
+  policy_arns          = [aws_iam_policy.ecs_task_secrets_policy.arn]
+  create_instance_profile = false
+}
 module "rds_role" {
   source                      = "./Modules/IAM"
   role_name                   = var.rds_role_name
