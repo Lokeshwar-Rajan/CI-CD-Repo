@@ -34,7 +34,7 @@ module "Bastion_SG_use1" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["49.207.186.65/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
   ] 
 }
@@ -51,7 +51,7 @@ module "Bastion_SG_euw1" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["49.207.186.65/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
   ] 
 }
@@ -130,7 +130,7 @@ module "ecs_frontend_sg_use1" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["49.207.186.65/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
   ]
 }
@@ -161,7 +161,7 @@ module "ecs_frontend_sg_euw1" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["49.207.186.65/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
   ]
 }
@@ -192,7 +192,7 @@ module "ecs_backend_sg_use1" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["49.207.186.65/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   },
   {
     description = "Allow"
@@ -230,7 +230,7 @@ module "ecs_backend_sg_euw1" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["49.207.186.65/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   },
   {
     description = "Allow"
