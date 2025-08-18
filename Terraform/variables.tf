@@ -51,14 +51,14 @@ variable "description" {}
 
 variable "alb_name" {}
 variable "certificate_arn" {}
-# variable "frontend_health_check_path" {}
-# variable "frontend_health_check_matcher" {}
-# variable "backend_health_check_path" {}
-# variable "backend_health_check_matcher" {}
-# variable "health_check_interval" {}
-# variable "health_check_timeout" {}
-# variable "healthy_threshold" {}
-# variable "unhealthy_threshold" {}
+variable "frontend_health_check_path" {}
+ variable "frontend_health_check_matcher" {}
+ variable "backend_health_check_path" {}
+ variable "backend_health_check_matcher" {}
+ variable "health_check_interval" {}
+ variable "health_check_timeout" {}
+ variable "healthy_threshold" {}
+ variable "unhealthy_threshold" {}
 
 
 variable "ecs_cluster_name" {}
