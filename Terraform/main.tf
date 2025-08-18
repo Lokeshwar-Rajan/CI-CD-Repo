@@ -285,14 +285,14 @@ module "alb_use1" {
   vpc_id                           = module.vpc_primary_use1.vpc_id
   alb_sg_id                        = module.alb_sg_use1.security_group_id
   certificate_arn                  = var.certificate_arn
-  # frontend_health_check_path     = var.frontend_health_check_path
-  # frontend_health_check_matcher  = var.frontend_health_check_matcher
-  # backend_health_check_path      = var.backend_health_check_path
-  # backend_health_check_matcher   = var.backend_health_check_matcher
-  # health_check_interval          = var.health_check_interval
-  # health_check_timeout           = var.health_check_timeout
-  # healthy_threshold              = var.healthy_threshold
-  # unhealthy_threshold            = var.unhealthy_threshold
+  frontend_health_check_path     = var.frontend_health_check_path
+   frontend_health_check_matcher  = var.frontend_health_check_matcher
+   backend_health_check_path      = var.backend_health_check_path
+   backend_health_check_matcher   = var.backend_health_check_matcher
+   health_check_interval          = var.health_check_interval
+   health_check_timeout           = var.health_check_timeout
+   healthy_threshold              = var.healthy_threshold
+   unhealthy_threshold            = var.unhealthy_threshold
 
   tags = var.tags
 }
@@ -305,14 +305,14 @@ module "alb_euw1" {
   vpc_id                           = module.vpc_sec.vpc_id
   alb_sg_id                        = module.alb_sg_euw1.security_group_id
   certificate_arn                  = var.certificate_arn
-  # frontend_health_check_path     = var.frontend_health_check_path
-  # frontend_health_check_matcher  = var.frontend_health_check_matcher
-  # backend_health_check_path      = var.backend_health_check_path
-  # backend_health_check_matcher   = var.backend_health_check_matcher
-  # health_check_interval          = var.health_check_interval
-  # health_check_timeout           = var.health_check_timeout
-  # healthy_threshold              = var.healthy_threshold
-  # unhealthy_threshold            = var.unhealthy_threshold
+   frontend_health_check_path     = var.frontend_health_check_path
+   frontend_health_check_matcher  = var.frontend_health_check_matcher
+   backend_health_check_path      = var.backend_health_check_path
+   backend_health_check_matcher   = var.backend_health_check_matcher
+   health_check_interval          = var.health_check_interval
+   health_check_timeout           = var.health_check_timeout
+   healthy_threshold              = var.healthy_threshold
+   unhealthy_threshold            = var.unhealthy_threshold
 
   tags = var.tags
 }
