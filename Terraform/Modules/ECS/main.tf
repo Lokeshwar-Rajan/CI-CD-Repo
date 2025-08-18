@@ -82,7 +82,7 @@ resource "aws_ecs_task_definition" "frontend" {
   container_definitions = jsonencode([
     {
       name         = "frontend"
-      image        = "${var.ecr_registry_url}/${var.ecr_repo_name}:frontend-latest"
+      image        = "${var.ecr_registry_url}:frontend-latest"
       essential    = true
       portMappings = [{ containerPort = 80, protocol = "tcp" }],
       logConfiguration = {
@@ -113,7 +113,7 @@ resource "aws_ecs_task_definition" "backend" {
   container_definitions = jsonencode([
     {
       name         = "backend"
-      image        = "${var.ecr_registry_url}/${var.ecr_repo_name}:backend-latest"
+      image        = "${var.ecr_registry_url}:backend-latest"
       essential    = true
       portMappings = [{ containerPort = 3000, protocol = "tcp" }],
       secrets = [
