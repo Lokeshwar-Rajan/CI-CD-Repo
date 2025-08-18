@@ -41,16 +41,16 @@ resource "aws_lb_target_group" "frontend" {
   port        = 80
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
-  target_type = "instance"
+  target_type = "ip"
 
-  # health_check {
-  #   path                = var.frontend_health_check_path
-  #   matcher             = var.frontend_health_check_matcher
-  #   interval            = var.health_check_interval
-  #   timeout             = var.health_check_timeout
-  #   healthy_threshold   = var.healthy_threshold
-  #   unhealthy_threshold = var.unhealthy_threshold
-  # }
+   health_check {
+     path                = var.frontend_health_check_path
+     matcher             = var.frontend_health_check_matcher
+     interval            = var.health_check_interval
+     timeout             = var.health_check_timeout
+     healthy_threshold   = var.healthy_threshold
+     unhealthy_threshold = var.unhealthy_threshold
+   }
 
   tags = { Name = "${var.alb_name}-frontend" }
 }
@@ -61,16 +61,16 @@ resource "aws_lb_target_group" "backend" {
   port        = 3000
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
-  target_type = "instance"
+  target_type = "ip"
 
-  # health_check {
-  #   path                = var.backend_health_check_path
-  #   matcher             = var.backend_health_check_matcher
-  #   interval            = var.health_check_interval
-  #   timeout             = var.health_check_timeout
-  #   healthy_threshold   = var.healthy_threshold
-  #   unhealthy_threshold = var.unhealthy_threshold
-  # }
+  health_check {
+  path                = var.backend_health_check_path
+  matcher             = var.backend_health_check_matcher
+  interval            = var.health_check_interval
+     timeout             = var.health_check_timeout
+     healthy_threshold   = var.healthy_threshold
+     unhealthy_threshold = var.unhealthy_threshold
+   }
 
   tags = { Name = "${var.alb_name}-backend" }
 }
