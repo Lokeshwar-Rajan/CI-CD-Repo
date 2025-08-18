@@ -6,11 +6,11 @@ pipeline {
     }
 
     environment {
-        AWS_REGION = 'us-east-1'
-        AWS_CREDENTIALS = 'aws-creds'
-        ECR_REPO_NAME = 'my-repo'
-        TERRAFORM_DIR = 'Terraform'
-        TF_VAR_FILE = '/home/jenkins/terraform.tfvars'
+        AWS_REGION       = 'us-east-1'
+        AWS_CREDENTIALS  = 'aws-creds'
+        ECR_REPO_NAME    = 'my-repo'
+        TERRAFORM_DIR    = 'Terraform'
+        TF_VAR_FILE      = '/home/jenkins/terraform.tfvars'
     }
 
     stages {
@@ -41,73 +41,72 @@ pipeline {
             }
         }
 
-        stage('Build & Push Images and Update ECS') {
-            when {
-                expression { params.ACTION == 'apply' }
-            }
-            stage('Fetch ECR Repo URL') {
-    steps {
-        withCredentials([usernamePassword(credentialsId: 'aws-creds',
+        stage('Fetch ECR Repo URL') {
+            when { expression { params.ACTION == 'apply' } }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'aws-creds',
                                                  usernameVariable: 'AWS_ACCESS_KEY_ID',
                                                  passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-            sh '''
-                ECR_REPO=$(aws ecr describe-repositories --repository-names my-app --query "repositories[0].repositoryUri" --output text)
-                echo "✅ ECR Repo: $ECR_REPO"
-                echo "ECR_REPO=$ECR_REPO" > ecr_env
-            '''
-        }
-    }
-}
-
-stage('Build Docker Images') {
-    steps {
-        dir('Frontend') {
-            sh "docker build -t frontend:latest ."
-        }
-
-        dir('Backend') {
-            sh "docker build -t backend:latest ."
-        }
-    }
-}
-            stages {
-                stage('Login to ECR') {
-                    steps {
-                        withCredentials([usernamePassword(credentialsId: 'aws-creds',
-                                                         usernameVariable: 'AWS_ACCESS_KEY_ID',
-                                                         passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                            sh '''
-                            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com
-                            '''
-                        }
-                    }
+                    sh '''
+                        ECR_REPO=$(aws ecr describe-repositories --repository-names my-app --query "repositories[0].repositoryUri" --output text)
+                        echo "✅ ECR Repo: $ECR_REPO"
+                        echo "ECR_REPO=$ECR_REPO" > ecr_env
+                    '''
                 }
-                stage('Tag & Push Docker Images') {
-    steps {
-        script {
-            def ECR_REPO = readFile('ecr_env').trim().split('=')[1]
-            sh """
-                # Tag and push frontend
-                docker tag frontend:latest ${ECR_REPO}:frontend-latest
-                docker push ${ECR_REPO}:frontend-latest
-
-                # Tag and push backend
-                docker tag backend:latest ${ECR_REPO}:backend-latest
-                docker push ${ECR_REPO}:backend-latest
-            """
+            }
         }
-    }
-}
+
+        stage('Build Docker Images') {
+            when { expression { params.ACTION == 'apply' } }
+            steps {
+                dir('Frontend') {
+                    sh "docker build -t frontend:latest ."
+                }
+                dir('Backend') {
+                    sh "docker build -t backend:latest ."
+                }
+            }
+        }
+
+        stage('Login to ECR') {
+            when { expression { params.ACTION == 'apply' } }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'aws-creds',
+                                                 usernameVariable: 'AWS_ACCESS_KEY_ID',
+                                                 passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    sh '''
+                        aws ecr get-login-password --region ${AWS_REGION} | \
+                        docker login --username AWS --password-stdin $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com
+                    '''
+                }
+            }
+        }
+
+        stage('Tag & Push Docker Images') {
+            when { expression { params.ACTION == 'apply' } }
+            steps {
+                script {
+                    def ECR_REPO = readFile('ecr_env').trim().split('=')[1]
+                    sh """
+                        # Tag and push frontend
+                        docker tag frontend:latest ${ECR_REPO}:frontend-latest
+                        docker push ${ECR_REPO}:frontend-latest
+
+                        # Tag and push backend
+                        docker tag backend:latest ${ECR_REPO}:backend-latest
+                        docker push ${ECR_REPO}:backend-latest
+                    """
+                }
             }
         }
     }
 
     post {
         success {
-            echo "Pipeline finished successfully with ACTION = ${params.ACTION}"
+            echo "✅ Pipeline finished successfully with ACTION = ${params.ACTION}"
         }
         failure {
-            echo "Pipeline failed. ACTION = ${params.ACTION}"
+            echo "❌ Pipeline failed. ACTION = ${params.ACTION}"
         }
     }
 }
