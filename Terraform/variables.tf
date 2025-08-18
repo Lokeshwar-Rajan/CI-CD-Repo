@@ -26,7 +26,8 @@ variable "sec_db_subnet_cidrs" {
 }
 
 
-variable "bastion_ami_id" {}
+variable "bastionus_ami_id" {}
+variable "bastioneu_ami_id" {}
 variable "bastion_instance_type" {}
 variable "root_volume_size" {}
 variable "key_pair_name" {}
