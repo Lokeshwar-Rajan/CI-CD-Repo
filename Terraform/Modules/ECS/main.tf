@@ -99,7 +99,7 @@ resource "aws_ecs_task_definition" "frontend" {
   ])
 
   execution_role_arn = var.ecs_task_execution_role_arn
-  task_role_arn      = var.ecs_task_role.arn
+  task_role_arn      = var.ecs_task_role_arn
   lifecycle {
     create_before_destroy = true
   }
@@ -142,7 +142,7 @@ resource "aws_ecs_task_definition" "backend" {
   ])
 
   execution_role_arn = var.ecs_task_execution_role_arn
-  task_role_arn      = var.ecs_task_role.arn
+  task_role_arn      = var.ecs_task_role_arn
   lifecycle {
     create_before_destroy = true
   }
