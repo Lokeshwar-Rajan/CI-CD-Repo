@@ -8,8 +8,8 @@ pipeline {
     environment {
         AWS_REGION = 'us-east-1'
         AWS_CREDENTIALS = 'aws-creds'
-        FRONTEND_IMAGE_TAG = 'frontend-latest'
-        BACKEND_IMAGE_TAG = 'backend-latest'
+        FRONTEND_IMAGE_TAG = 'frontend'
+        BACKEND_IMAGE_TAG = 'backend'
         ECR_REPO_NAME = 'my-repo'
         TERRAFORM_DIR = 'Terraform'
         TF_VAR_FILE = '/home/jenkins/terraform.tfvars'
