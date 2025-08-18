@@ -321,7 +321,7 @@ module "alb_euw1" {
 module "bastion_use1" {
   source             = "./Modules/Bastion"
   providers = { aws = aws.use1 }
-  ami_id             = var.bastion_ami_id           
+  ami_id             = var.bastionus_ami_id           
   instance_type      = var.bastion_instance_type
   subnet_id          = module.vpc_primary_use1.public_subnet_ids[0]
   security_group_ids = [module.Bastion_SG_use1.security_group_id]
@@ -338,7 +338,7 @@ module "bastion_use1" {
 module "bastion_euw1" {
   source             = "./Modules/Bastion"
   providers = { aws = aws.euw1 }
-  ami_id             = var.bastion_ami_id           
+  ami_id             = var.bastioneu_ami_id           
   instance_type      = var.bastion_instance_type
   subnet_id          = module.vpc_sec.public_subnet_ids[0]
   security_group_ids = [module.Bastion_SG_euw1.security_group_id]
