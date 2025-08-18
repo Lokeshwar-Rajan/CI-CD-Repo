@@ -49,15 +49,15 @@ variable "frontend_health_check_path" {
    default     = 5
  }
 
-# variable "healthy_threshold" {
-#   type        = number
-#   default     = 3
-# }
+ variable "healthy_threshold" {
+   type        = number
+   default     = 3
+ }
 
-# variable "unhealthy_threshold" {
-#   type        = number
-#   default     = 3
-# }
+ variable "unhealthy_threshold" {
+   type        = number
+   default     = 3
+ }
 
 variable "tags" {
   type        = map(string)
