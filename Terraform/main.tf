@@ -529,7 +529,7 @@ module "aws_sns_topic_euw1" {
   
 }
 resource "aws_iam_policy" "ecs_task_secrets_policy" {
-  name        = "${var.ecs_task_role_name}-secrets-policy"
+  name        = "ecs_task_role-secrets-policy"
   description = "Allow ECS task to access specific secrets"
 
   policy = jsonencode({
