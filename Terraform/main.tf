@@ -370,6 +370,7 @@ module "ecs_use1" {
   ecs_backend_log_group_name  = module.cloudwatch_monitoring_use1.ecs_backend_log_group_name
   aws_region                  = var.aws_region_us
   ecs_task_execution_role_arn = module.ecs_task_execution_role.role_arn
+  ecs_task_role_arn           = module.ecs_task_role.role_arn
   service_desired_count       = var.service_desired_count
   frontend_tg_arn             = module.alb_use1.frontend_target_group_arn
   backend_tg_arn              = module.alb_use1.backend_target_group_arn
@@ -400,6 +401,7 @@ module "ecs_euw1" {
   ecs_backend_log_group_name  = module.cloudwatch_monitoring_euw1.ecs_backend_log_group_name
   aws_region                  = var.aws_region_eu
   ecs_task_execution_role_arn = module.ecs_task_execution_role.role_arn
+  ecs_task_role_arn           = module.ecs_task_role.role_arn
   service_desired_count       = var.service_desired_count
   frontend_tg_arn             = module.alb_euw1.frontend_target_group_arn
   backend_tg_arn              = module.alb_euw1.backend_target_group_arn
