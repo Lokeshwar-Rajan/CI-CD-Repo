@@ -540,7 +540,7 @@ resource "aws_iam_policy" "ecs_task_secrets_policy" {
       {
         Effect   = "Allow"
         Action   = ["secretsmanager:GetSecretValue"]
-        Resource = module.rds_db_secret.
+        Resource = module.rds_db_secret.secret_arn
       }
     ]
   })
