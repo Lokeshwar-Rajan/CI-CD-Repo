@@ -115,6 +115,7 @@ variable "ecs_task_role_name" {
 variable "ecs_task_trusted_services" {
   default = ["ecs-tasks.amazonaws.com"]
 }
+variable "ecs_task_policy_arns" {}
 variable "recovery_window_in_days" {
   
 }
