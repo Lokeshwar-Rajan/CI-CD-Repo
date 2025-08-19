@@ -75,15 +75,10 @@ resource "aws_autoscaling_group" "ecs_asg" {
 resource "aws_ecs_task_definition" "frontend" {
   family                   = "${var.ecs_cluster_name}-frontend"
   requires_compatibilities = ["EC2"]
-  network_mode             = "awsvpc"
+  network_mode             = "bridge"
   cpu                      = 256
   memory                   = 512
 
-  network_configuration {
-  subnets         = var.private_subnet_ids 
-  security_groups = var.frontend_sg_id 
-  assign_public_ip = false 
-}
   container_definitions = jsonencode([
     {
       name         = "frontend"
@@ -111,15 +106,10 @@ resource "aws_ecs_task_definition" "frontend" {
 resource "aws_ecs_task_definition" "backend" {
   family                   = "${var.ecs_cluster_name}-backend"
   requires_compatibilities = ["EC2"]
-  network_mode             = "awsvpc"
+  network_mode             = "bridge"
   cpu                      = 256
   memory                   = 512
 
-  network_configuration {
-  subnets         = var.private_subnet_ids
-  security_groups = var.backend_sg_id 
-  assign_public_ip = false 
-}
   container_definitions = jsonencode([
     {
       name         = "backend"
