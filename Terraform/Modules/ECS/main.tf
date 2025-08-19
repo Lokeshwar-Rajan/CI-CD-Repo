@@ -75,7 +75,7 @@ resource "aws_autoscaling_group" "ecs_asg" {
 resource "aws_ecs_task_definition" "frontend" {
   family                   = "${var.ecs_cluster_name}-frontend"
   requires_compatibilities = ["EC2"]
-  network_mode             = "bridge"
+  network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
 
@@ -106,7 +106,7 @@ resource "aws_ecs_task_definition" "frontend" {
 resource "aws_ecs_task_definition" "backend" {
   family                   = "${var.ecs_cluster_name}-backend"
   requires_compatibilities = ["EC2"]
-  network_mode             = "bridge"
+  network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
 
