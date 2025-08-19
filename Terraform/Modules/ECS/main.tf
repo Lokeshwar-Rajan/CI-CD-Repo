@@ -79,6 +79,11 @@ resource "aws_ecs_task_definition" "frontend" {
   cpu                      = 256
   memory                   = 512
 
+  network_configuration {
+  subnets         = var.ecs_subnet_ids 
+  security_groups = var.ecs_frontend_sg_id 
+  assign_public_ip = false 
+}
   container_definitions = jsonencode([
     {
       name         = "frontend"
@@ -110,6 +115,11 @@ resource "aws_ecs_task_definition" "backend" {
   cpu                      = 256
   memory                   = 512
 
+  network_configuration {
+  subnets         = var.ecs_subnet_ids 
+  security_groups = var.ecs_backend_sg_id 
+  assign_public_ip = false 
+}
   container_definitions = jsonencode([
     {
       name         = "backend"
