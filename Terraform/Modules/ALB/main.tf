@@ -41,7 +41,7 @@ resource "aws_lb_target_group" "frontend" {
   port        = 80
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
-  target_type = "ip"
+  target_type = "instance"
 
    health_check {
      path                = var.frontend_health_check_path
@@ -61,7 +61,7 @@ resource "aws_lb_target_group" "backend" {
   port        = 3000
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
-  target_type = "ip"
+  target_type = "instance"
 
   health_check {
   path                = var.backend_health_check_path
