@@ -80,8 +80,8 @@ resource "aws_ecs_task_definition" "frontend" {
   memory                   = 512
 
   network_configuration {
-  subnets         = var.ecs_subnet_ids 
-  security_groups = var.ecs_frontend_sg_id 
+  subnets         = var.private_subnet_ids 
+  security_groups = var.frontend_sg_id 
   assign_public_ip = false 
 }
   container_definitions = jsonencode([
@@ -116,8 +116,8 @@ resource "aws_ecs_task_definition" "backend" {
   memory                   = 512
 
   network_configuration {
-  subnets         = var.ecs_subnet_ids 
-  security_groups = var.ecs_backend_sg_id 
+  subnets         = var.private_subnet_ids
+  security_groups = var.backend_sg_id 
   assign_public_ip = false 
 }
   container_definitions = jsonencode([
