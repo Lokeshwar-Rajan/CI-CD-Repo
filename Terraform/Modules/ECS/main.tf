@@ -152,6 +152,12 @@ resource "aws_ecs_service" "frontend" {
   task_definition = aws_ecs_task_definition.frontend.arn
   desired_count   = var.service_desired_count
 
+  network_configuration {
+    subnets         = var.private_subnet_ids
+    security_groups = var.frontend_security_group_id
+    assign_public_ip = false 
+  }
+
   load_balancer {
     target_group_arn = var.frontend_tg_arn
     container_name   = "frontend"
@@ -174,6 +180,12 @@ resource "aws_ecs_service" "backend" {
   cluster         = aws_ecs_cluster.myecs.id
   task_definition = aws_ecs_task_definition.backend.arn
   desired_count   = var.service_desired_count
+
+  network_configuration {
+    subnets         = var.private_subnet_ids
+    security_groups = var.backend_security_group_id
+    assign_public_ip = false 
+  }
 
   load_balancer {
     target_group_arn = var.backend_tg_arn
