@@ -154,7 +154,7 @@ resource "aws_ecs_service" "frontend" {
 
   network_configuration {
     subnets         = var.private_subnet_ids
-    security_groups = var.frontend_sg_id
+    security_groups = [var.frontend_sg_id]
     assign_public_ip = false 
   }
 
@@ -183,7 +183,7 @@ resource "aws_ecs_service" "backend" {
 
   network_configuration {
     subnets         = var.private_subnet_ids
-    security_groups = var.backend_sg_id
+    security_groups = [var.backend_sg_id]
     assign_public_ip = false 
   }
 
