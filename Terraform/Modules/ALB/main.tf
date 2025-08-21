@@ -78,7 +78,7 @@ resource "aws_lb_target_group" "backend" {
 
 resource "aws_lb_listener_rule" "frontend_rule" {
   listener_arn = aws_lb_listener.http.arn
-  priority     = 10
+  priority     = 20
   condition {
     path_pattern {
       values = ["/*"]
@@ -94,7 +94,7 @@ resource "aws_lb_listener_rule" "frontend_rule" {
 
 resource "aws_lb_listener_rule" "backend_rule" {
   listener_arn = aws_lb_listener.http.arn
-  priority     = 20
+  priority     = 10
   condition {
     path_pattern {
       values = ["/api/*"]
