@@ -50,7 +50,7 @@ variable "description" {}
 
 
 variable "alb_name" {}
-variable "certificate_arn" {}
+# variable "certificate_arn" {}
 variable "frontend_health_check_path" {}
  variable "frontend_health_check_matcher" {}
  variable "backend_health_check_path" {}
