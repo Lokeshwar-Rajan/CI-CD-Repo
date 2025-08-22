@@ -161,7 +161,7 @@ module "ecs_frontend_sg_euw1" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.2.0.0/24", "10.2.1.0/24"]
   }
   ]
 }
@@ -192,7 +192,7 @@ module "ecs_backend_sg_use1" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.1.0.0/24", "10.1.1.0/24"]
   },
   {
     description = "Allow"
@@ -230,7 +230,7 @@ module "ecs_backend_sg_euw1" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.2.0.0/24", "10.2.1.0/24"]
   },
   {
     description = "Allow"
@@ -284,7 +284,7 @@ module "alb_use1" {
   subnet_ids                       = module.vpc_primary_use1.public_subnet_ids
   vpc_id                           = module.vpc_primary_use1.vpc_id
   alb_sg_id                        = module.alb_sg_use1.security_group_id
-  certificate_arn                  = var.certificate_arn
+  # certificate_arn                  = var.certificate_arn
   frontend_health_check_path     = var.frontend_health_check_path
    frontend_health_check_matcher  = var.frontend_health_check_matcher
    backend_health_check_path      = var.backend_health_check_path
@@ -304,7 +304,7 @@ module "alb_euw1" {
   subnet_ids                       = module.vpc_sec.public_subnet_ids
   vpc_id                           = module.vpc_sec.vpc_id
   alb_sg_id                        = module.alb_sg_euw1.security_group_id
-  certificate_arn                  = var.certificate_arn
+ # certificate_arn                  = var.certificate_arn
    frontend_health_check_path     = var.frontend_health_check_path
    frontend_health_check_matcher  = var.frontend_health_check_matcher
    backend_health_check_path      = var.backend_health_check_path
