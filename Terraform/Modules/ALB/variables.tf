@@ -15,9 +15,9 @@ variable "alb_sg_id" {
 
 }
 
-variable "certificate_arn" {
-
-}
+# variable "certificate_arn" {
+#
+# }
 
 variable "frontend_health_check_path" {
    type        = string
